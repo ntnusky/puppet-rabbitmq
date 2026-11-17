@@ -182,6 +182,19 @@ describe Puppet::Type.type(:rabbitmq_policy) do
     end.to raise_error(Puppet::Error, %r{Invalid shards-per-node value.*future})
   end
 
+  it 'accepts and converts the stream-max-segment-size-bytes value' do
+    definition = { 'stream-max-segment-size-bytes' => '5000000' }
+    policy[:definition] = definition
+    expect(policy[:definition]['stream-max-segment-size-bytes']).to eq(5_000_000)
+  end
+
+  it 'does not accept non-numeric stream-max-segment-size-bytes value' do
+    definition = { 'stream-max-segment-size-bytes' => 'future' }
+    expect do
+      policy[:definition] = definition
+    end.to raise_error(Puppet::Error, %r{Invalid stream-max-segment-size-bytes value.*future})
+  end
+
   it 'accepts and converts the ha-sync-batch-size value' do
     definition = { 'ha-sync-batch-size' => '1800000' }
     policy[:definition] = definition
